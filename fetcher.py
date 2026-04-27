@@ -10,6 +10,12 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
+def clean_price(price):
+    if price is None:
+        return None
+    return float(str(price).replace("$", "").replace("€", "").replace(",", "").strip())
+
+
 def get_average_price(origin, destination):
     result = supabase.table("price_history").select("price").eq("origin", origin).eq("destination", destination).execute()
     prices = [r["price"] for r in result.data if r["price"]]
@@ -22,7 +28,7 @@ def save_price_history(origin, destination, price):
     supabase.table("price_history").insert({
         "origin": origin,
         "destination": destination,
-        "price": price,
+        "price": clean_price(price),
     }).execute()
 
 
@@ -37,7 +43,7 @@ def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, dea
         "origin": origin,
         "destination": dest,
         "city_name": city,
-        "price": price,
+        "price": clean_price(price),
         "departure_date": str(dep_date),
         "return_date": str(ret_date),
         "airline": airline,
@@ -92,7 +98,7 @@ def process_weekend_deals():
                 ret_dt = datetime.combine(ret, datetime.min.time())
                 flights = fetch_flights(origin, dest["iata"], dep_dt, ret_dt)
                 for f in flights[:1]:
-                    price = f.price
+                    price = clean_price(f.price)
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
@@ -117,7 +123,7 @@ def process_oneday_deals():
                 dep_dt = datetime.combine(day, datetime.min.time())
                 flights = fetch_flights(origin, dest["iata"], dep_dt, dep_dt, one_day=True)
                 for f in flights[:1]:
-                    price = f.price
+                    price = clean_price(f.price)
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
@@ -136,7 +142,7 @@ def process_best_deals():
             ret = dep + timedelta(days=3)
             flights = fetch_flights(origin, dest["iata"], dep, ret)
             for f in flights[:1]:
-                price = f.price
+                price = clean_price(f.price)
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
                 if avg is None or score >= DEAL_THRESHOLD:
