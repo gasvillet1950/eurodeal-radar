@@ -32,7 +32,7 @@ def compute_deal_score(price, avg_price):
     return round((avg_price - price) / avg_price, 4)
 
 
-def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, deal_type, score, url):
+def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, deal_type, score):
     supabase.table("flights_deals").insert({
         "origin": origin,
         "destination": dest,
@@ -43,22 +43,30 @@ def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, dea
         "airline": airline,
         "deal_type": deal_type,
         "deal_score": score,
-        "url": url,
     }).execute()
 
 
-def fetch_flights(origin, destination, dep_date, ret_date):
+def fetch_flights(origin, destination, dep_date, ret_date, one_day=False):
     try:
-        filter_ = create_filter(
-            flight_data=[
+        if one_day:
+            flight_data = [
+                FlightData(date=dep_date.strftime("%Y-%m-%d"), from_airport=origin, to_airport=destination),
+            ]
+            trip = "one-way"
+        else:
+            flight_data = [
                 FlightData(date=dep_date.strftime("%Y-%m-%d"), from_airport=origin, to_airport=destination),
                 FlightData(date=ret_date.strftime("%Y-%m-%d"), from_airport=destination, to_airport=origin),
-            ],
-            trip="round-trip",
+            ]
+            trip = "round-trip"
+
+        filter_ = create_filter(
+            flight_data=flight_data,
+            trip=trip,
             seat="economy",
             passengers=Passengers(adults=1),
         )
-        result = get_flights(filter_)
+        result = get_flights(filter_=filter_)
         if result and result.flights:
             return result.flights
         return []
@@ -70,56 +78,51 @@ def fetch_flights(origin, destination, dep_date, ret_date):
 def process_weekend_deals():
     print("→ Deals week-end...")
     today = datetime.today()
-    # Cherche les 8 prochains week-ends
     weekends = []
     for i in range(60):
         d = today + timedelta(days=i)
-        if d.weekday() == 4:  # Vendredi
+        if d.weekday() == 4:
             weekends.append((d.date(), (d + timedelta(days=2)).date()))
 
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
             for dep, ret in weekends[:4]:
-                flights = fetch_flights(origin, dest["iata"], datetime.combine(dep, datetime.min.time()), datetime.combine(ret, datetime.min.time()))
+                dep_dt = datetime.combine(dep, datetime.min.time())
+                ret_dt = datetime.combine(ret, datetime.min.time())
+                flights = fetch_flights(origin, dest["iata"], dep_dt, ret_dt)
                 for f in flights[:1]:
                     price = f.price
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
-                        airline = f.airline if hasattr(f, "airline") else "N/A"
-                        save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret, airline, "weekend", score, "")
+                        airline = getattr(f, "airline", "N/A")
+                        save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret, airline, "weekend", score)
                         print(f"  ✅ Deal week-end : {origin}→{dest['iata']} {dep} {price}€ (score {score})")
 
 
 def process_oneday_deals():
     print("→ Deals 1 jour...")
     today = datetime.today()
-    saturdays = []
-    sundays = []
+    weekenddays = []
     for i in range(180):
         d = today + timedelta(days=i)
-        if d.weekday() == 5:
-            saturdays.append(d.date())
-        elif d.weekday() == 6:
-            sundays.append(d.date())
+        if d.weekday() in [5, 6]:
+            weekenddays.append(d.date())
 
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
-            for day in (saturdays + sundays)[:8]:
-                flights = fetch_flights(
-                    origin, dest["iata"],
-                    datetime.combine(day, datetime.min.time()),
-                    datetime.combine(day, datetime.min.time())
-                )
+            for day in weekenddays[:8]:
+                dep_dt = datetime.combine(day, datetime.min.time())
+                flights = fetch_flights(origin, dest["iata"], dep_dt, dep_dt, one_day=True)
                 for f in flights[:1]:
                     price = f.price
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
-                        airline = f.airline if hasattr(f, "airline") else "N/A"
-                        save_flight_deal(origin, dest["iata"], dest["city"], price, day, day, airline, "1jour", score, "")
+                        airline = getattr(f, "airline", "N/A")
+                        save_flight_deal(origin, dest["iata"], dest["city"], price, day, day, airline, "1jour", score)
                         print(f"  ✅ Deal 1 jour : {origin}→{dest['iata']} {day} {price}€")
 
 
@@ -137,8 +140,8 @@ def process_best_deals():
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
                 if avg is None or score >= DEAL_THRESHOLD:
-                    airline = f.airline if hasattr(f, "airline") else "N/A"
-                    save_flight_deal(origin, dest["iata"], dest["city"], price, dep.date(), ret.date(), airline, "best", score, "")
+                    airline = getattr(f, "airline", "N/A")
+                    save_flight_deal(origin, dest["iata"], dest["city"], price, dep.date(), ret.date(), airline, "best", score)
                     print(f"  ✅ Meilleur deal : {origin}→{dest['iata']} {price}€")
 
 
