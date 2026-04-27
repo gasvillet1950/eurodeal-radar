@@ -19,6 +19,12 @@ def clean_price(price):
         return None
 
 
+def clean_time(t):
+    if not t:
+        return None
+    return str(t).strip()[:10]
+
+
 def get_average_price(origin, destination):
     result = supabase.table("price_history").select("price").eq("origin", origin).eq("destination", destination).execute()
     prices = [r["price"] for r in result.data if r["price"]]
@@ -31,7 +37,7 @@ def save_price_history(origin, destination, price):
     supabase.table("price_history").insert({
         "origin": origin,
         "destination": destination,
-        "price": clean_price(price),
+        "price": price,
     }).execute()
 
 
@@ -41,18 +47,31 @@ def compute_deal_score(price, avg_price):
     return round((avg_price - price) / avg_price, 4)
 
 
-def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, deal_type, score):
+def save_flight_deal(origin, dest, city, price, dep_date, ret_date, airline, deal_type, score, departure_time=None, arrival_time=None, duration=None, stops=0):
     supabase.table("flights_deals").insert({
         "origin": origin,
         "destination": dest,
         "city_name": city,
-        "price": clean_price(price),
+        "price": price,
         "departure_date": str(dep_date),
         "return_date": str(ret_date),
         "airline": airline,
         "deal_type": deal_type,
         "deal_score": score,
+        "departure_time": departure_time,
+        "arrival_time": arrival_time,
+        "duration": duration,
+        "stops": stops,
     }).execute()
+
+
+def extract_flight_info(f):
+    departure_time = clean_time(getattr(f, 'departure', None))
+    arrival_time = clean_time(getattr(f, 'arrival', None))
+    duration = clean_time(getattr(f, 'duration', None))
+    stops = getattr(f, 'stops', 0) or 0
+    airline = getattr(f, 'name', None) or getattr(f, 'airline', 'N/A')
+    return departure_time, arrival_time, duration, stops, airline
 
 
 def fetch_flights(origin, destination, dep_date, ret_date, one_day=False):
@@ -104,12 +123,12 @@ def process_weekend_deals():
                     price = clean_price(f.price)
                     if price is None:
                         continue
+                    dep_time, arr_time, duration, stops, airline = extract_flight_info(f)
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
-                        airline = getattr(f, "name", "N/A")
-                        save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret, airline, "weekend", score)
-                        print(f"  ✅ Deal week-end : {origin}→{dest['iata']} {dep} {price}€ score:{score}")
+                        save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret, airline, "weekend", score, dep_time, arr_time, duration, stops)
+                        print(f"  ✅ Week-end : {origin}→{dest['iata']} {dep} {price}€ {dep_time}→{arr_time}")
 
 
 def process_oneday_deals():
@@ -131,12 +150,12 @@ def process_oneday_deals():
                     price = clean_price(f.price)
                     if price is None:
                         continue
+                    dep_time, arr_time, duration, stops, airline = extract_flight_info(f)
                     save_price_history(origin, dest["iata"], price)
                     score = compute_deal_score(price, avg)
                     if avg is None or score >= DEAL_THRESHOLD:
-                        airline = getattr(f, "name", "N/A")
-                        save_flight_deal(origin, dest["iata"], dest["city"], price, day, day, airline, "1jour", score)
-                        print(f"  ✅ Deal 1 jour : {origin}→{dest['iata']} {day} {price}€")
+                        save_flight_deal(origin, dest["iata"], dest["city"], price, day, day, airline, "1jour", score, dep_time, arr_time, duration, stops)
+                        print(f"  ✅ 1 jour : {origin}→{dest['iata']} {day} {price}€ {dep_time}→{arr_time}")
 
 
 def process_best_deals():
@@ -152,12 +171,12 @@ def process_best_deals():
                 price = clean_price(f.price)
                 if price is None:
                     continue
+                dep_time, arr_time, duration, stops, airline = extract_flight_info(f)
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
                 if avg is None or score >= DEAL_THRESHOLD:
-                    airline = getattr(f, "name", "N/A")
-                    save_flight_deal(origin, dest["iata"], dest["city"], price, dep.date(), ret.date(), airline, "best", score)
-                    print(f"  ✅ Meilleur deal : {origin}→{dest['iata']} {price}€")
+                    save_flight_deal(origin, dest["iata"], dest["city"], price, dep.date(), ret.date(), airline, "best", score, dep_time, arr_time, duration, stops)
+                    print(f"  ✅ Best : {origin}→{dest['iata']} {price}€ {dep_time}→{arr_time}")
 
 
 if __name__ == "__main__":
