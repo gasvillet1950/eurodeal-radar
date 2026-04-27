@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eurodeal Radar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --bg2: #0d1117;
+      --card: #0f1520;
+      --border: #1a2235;
+      --border-hover: #2a3a55;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --gold: #f0a500;
+      --gold-dim: #7a5200;
+      --green: #10b981;
+      --green-dim: #064e3b;
+      --blue: #3b82f6;
+      --red: #ef4444;
+      --tab-active: #ffffff;
+      --tab-inactive: #475569;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background-image: radial-gradient(ellipse at 20% 0%, #0f1f3d 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 100%, #0a1a2e 0%, transparent 60%);
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      background: rgba(7, 9, 15, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      font-size: 1.4rem;
+    }
+
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+
+    .logo-text span {
+      color: var(--gold);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .last-update {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .refresh-btn {
+      background: var(--border);
+      border: 1px solid var(--border-hover);
+      color: var(--muted2);
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .refresh-btn:hover {
+      background: var(--border-hover);
+      color: var(--text);
+    }
+
+    /* MAIN */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stat-value.gold { color: var(--gold); }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.3rem;
+      width: fit-content;
+    }
+
+    .tab {
+      padding: 0.55rem 1.2rem;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--tab-inactive);
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--muted2); }
+
+    .tab.active {
+      background: #1e2d45;
+      color: var(--tab-active);
+    }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-right: 0.25rem;
+    }
+
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 0.35rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
+    .filter-btn.active { background: #1e2d45; border-color: #2a4a6e; color: #fff; }
+
+    /* GRID */
+    .deals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+    }
+
+    /* DEAL CARD */
+    .deal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.25s ease;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease both;
+    }
+
+    .deal-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .deal-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,165,0,0.08);
+    }
+
+    .deal-card:hover::before { opacity: 1; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD HEADER */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .route {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .airport-code {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+
+    .route-arrow {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 0 0.1rem;
+    }
+
+    .city-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.78rem;
+      color: var(--muted2);
+    }
+
+    /* CARD META */
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--muted2);
+    }
+
+    .meta-icon { font-size: 0.75rem; }
+
+    /* CARD FOOTER */
+    .card-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .price-block {}
+
+    .price {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .price-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.2rem;
+    }
+
+    .deal-badge {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--green);
+      padding: 0.35rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .airline-tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+    }
+
+    /* DIVIDER */
+    .card-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.9rem 0;
+    }
+
+    /* EMPTY / LOADING */
+    .state-box {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+
+    .state-box .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .state-box p { font-size: 0.9rem; line-height: 1.6; }
+
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      header { padding: 0 1rem; }
+      main { padding: 1rem; }
+      .deals-grid { grid-template-columns: 1fr; }
+      .tabs { width: 100%; }
+      .tab { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-icon">✈</span>
+    <span class="logo-text">Euro<span>deal</span> Radar</span>
+  </div>
+  <div class="header-right">
+    <span class="last-update" id="lastUpdate">Chargement...</span>
+    <button class="refresh-btn" onclick="loadAll()">↻ Actualiser</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">Deals actifs</div>
+      <div class="stat-value" id="statTotal">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Meilleur prix</div>
+      <div class="stat-value gold" id="statBest">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Destinations</div>
+      <div class="stat-value">15</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sources</div>
+      <div class="stat-value">CDG · ORY</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('1jour', this)">🗓 1 Jour</button>
+    <button class="tab" onclick="switchTab('weekend', this)">📅 Week-end</button>
+    <button class="tab" onclick="switchTab('best', this)">🏆 Meilleurs</button>
+    <button class="tab" onclick="switchTab('hotel', this)">🏨 Hôtels</button>
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">Départ</span>
+    <button class="filter-btn active" onclick="setOrigin('all', this)">Tous</button>
+    <button class="filter-btn" onclick="setOrigin('CDG', this)">CDG Paris-Charles de Gaulle</button>
+    <button class="filter-btn" onclick="setOrigin('ORY', this)">ORY Paris-Orly</button>
+  </div>
+
+  <div class="section-title" id="sectionTitle">Deals 1 journée week-end</div>
+
+  <div class="deals-grid" id="dealsGrid">
+    <div class="state-box">
+      <div class="spinner"></div>
+      <p>Chargement des deals...</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://idihvrjjhutgvvqauogz.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkaWh2cmpqaHV0Z3Z2cWF1b2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNDA2MjEsImV4cCI6MjA5MjgxNjYyMX0.LsBCE-g4JI1rkG0x7UDpo8S676jmJ0JMISHZhnId6Zw';
+
+  const FLAGS = {
+    BCN: '🇪🇸', MAD: '🇪🇸', LIS: '🇵🇹', AMS: '🇳🇱', LHR: '🇬🇧',
+    SVQ: '🇪🇸', VLC: '🇪🇸', PRG: '🇨🇿', VIE: '🇦🇹', CPH: '🇩🇰',
+    NAP: '🇮🇹', WAW: '🇵🇱', ARN: '🇸🇪', ATH: '🇬🇷', SPU: '🇭🇷'
+  };
+
+  const LABELS = {
+    '1jour': 'Deals 1 journée week-end',
+    'weekend': 'Deals week-end (ven → dim)',
+    'best': 'Meilleurs deals toutes dates',
+    'hotel': 'Hôtels'
+  };
+
+  let currentTab = '1jour';
+  let currentOrigin = 'all';
+  let allData = {};
+
+  async function fetchDeals(type) {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=100`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    return res.json();
+  }
+
+  async function loadAll() {
+    document.getElementById('lastUpdate').textContent = 'Actualisation...';
+    try {
+      const [jour, weekend, best] = await Promise.all([
+        fetchDeals('1jour'),
+        fetchDeals('weekend'),
+        fetchDeals('best')
+      ]);
+      allData = { '1jour': jour, 'weekend': weekend, 'best': best, 'hotel': [] };
+      updateStats();
+      renderDeals();
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent =
+        `Mis à jour ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+    } catch(e) {
+      document.getElementById('lastUpdate').textContent = 'Erreur de chargement';
+    }
+  }
+
+  function updateStats() {
+    const all = [...(allData['1jour']||[]), ...(allData['weekend']||[]), ...(allData['best']||[])];
+    document.getElementById('statTotal').textContent = all.length;
+    const prices = all.map(d => d.price).filter(Boolean);
+    if (prices.length) {
+      document.getElementById('statBest').textContent = Math.min(...prices) + '€';
+    }
+  }
+
+  function renderDeals() {
+    const grid = document.getElementById('dealsGrid');
+    document.getElementById('sectionTitle').textContent = LABELS[currentTab] || '';
+
+    if (currentTab === 'hotel') {
+      grid.innerHTML = `<div class="state-box"><div class="icon">🏨</div><p>Section hôtels bientôt disponible.<br>Les meilleurs deals de nuits en Europe arrivent.</p></div>`;
+      return;
+    }
+
+    let deals = allData[currentTab] || [];
+    if (currentOrigin !== 'all') {
+      deals = deals.filter(d => d.origin === currentOrigin);
+    }
+
+    if (!deals.length) {
+      grid.innerHTML = `<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé pour ce filtre.<br>Reviens dans quelques heures, le radar tourne en continu.</p></div>`;
+      return;
+    }
+
+    // Dédoublonnage : meilleur prix par destination
+    const best = {};
+    deals.forEach(d => {
+      const key = `${d.origin}-${d.destination}-${d.departure_date}`;
+      if (!best[key] || d.price < best[key].price) best[key] = d;
+    });
+    const unique = Object.values(best);
+
+    grid.innerHTML = unique.map((d, i) => cardHTML(d, i)).join('');
+  }
+
+  function cardHTML(d, i) {
+    const flag = FLAGS[d.destination] || '🌍';
+    const score = d.deal_score || 0;
+    const pct = Math.round(score * 100);
+    const dealBadge = pct >= 15
+      ? `<span class="deal-badge">🔥 -${pct}%</span>`
+      : `<span class="airline-tag">${d.airline || 'N/A'}</span>`;
+
+    const depDate = d.departure_date ? new Date(d.departure_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '—';
+    const retDate = (d.return_date && d.return_date !== d.departure_date)
+      ? new Date(d.return_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+      : null;
+
+    const dateStr = retDate
+      ? `${depDate} → ${retDate}`
+      : depDate;
+
+    return `
+      <div class="deal-card" style="animation-delay:${i * 0.04}s">
+        <div class="card-header">
+          <div class="route">
+            <span class="airport-code">${d.origin}</span>
+            <span class="route-arrow">→</span>
+            <span class="airport-code">${d.destination}</span>
+          </div>
+          <div class="city-badge">${flag} ${d.city_name || d.destination}</div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">
+            <span class="meta-icon">🗓</span>
+            <span>${dateStr}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">✈</span>
+            <span>${d.airline || 'N/A'}</span>
+          </div>
+        </div>
+        <hr class="card-divider"/>
+        <div class="card-footer">
+          <div class="price-block">
+            <div class="price">${d.price ? Math.round(d.price) + '€' : '—'}</div>
+            <div class="price-label">aller-retour · éco</div>
+          </div>
+          ${dealBadge}
+        </div>
+      </div>
+    `;
+  }
+
+  function switchTab(tab, el) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderDeals();
+  }
+
+  function setOrigin(origin, el) {
+    currentOrigin = origin;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderDeals();
+  }
+
+  loadAll();
+</script>
+</body>
+</html>
