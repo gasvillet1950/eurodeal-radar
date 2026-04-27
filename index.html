@@ -1,416 +1,382 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Eurodeal Radar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eurodeal Radar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    :root {
-      --bg: #07090f;
-      --bg2: #0d1117;
-      --card: #0f1520;
-      --border: #1a2235;
-      --border-hover: #2a3a55;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --muted2: #94a3b8;
-      --gold: #f0a500;
-      --gold-dim: #7a5200;
-      --green: #10b981;
-      --green-dim: #064e3b;
-      --blue: #3b82f6;
-      --red: #ef4444;
-      --tab-active: #ffffff;
-      --tab-inactive: #475569;
-    }
+:root{
+  --bg:#f4f1ec;
+  --bg2:#ede9e2;
+  --card:#ffffff;
+  --card-hover:#fafaf8;
+  --border:#e2ddd6;
+  --border-dark:#c8c2b8;
+  --text:#1a1714;
+  --text2:#4a4540;
+  --muted:#8a8480;
+  --muted2:#6a6460;
+  --accent:#c17f3a;
+  --accent-light:#f5e9d6;
+  --accent-dim:#7a4f20;
+  --green:#1a7a4a;
+  --green-bg:#e8f5ee;
+  --blue:#2563eb;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover:0 8px 32px rgba(0,0,0,0.12);
+}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      background-image: radial-gradient(ellipse at 20% 0%, #0f1f3d 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 100%, #0a1a2e 0%, transparent 60%);
-    }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+}
 
-    /* HEADER */
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      background: rgba(7, 9, 15, 0.8);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-    }
+/* HEADER */
+header{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,0.04);
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+.logo{display:flex;align-items:center;gap:0.75rem}
+.logo-icon{font-size:1.5rem}
+.logo-text{
+  font-family:'Fraunces',serif;
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:-0.01em;
+}
+.logo-text span{color:var(--accent)}
 
-    .logo-icon {
-      font-size: 1.4rem;
-    }
+.header-right{display:flex;align-items:center;gap:1rem}
+.last-update{font-size:0.72rem;color:var(--muted);letter-spacing:0.04em}
+.refresh-btn{
+  background:var(--accent);
+  border:none;
+  color:#fff;
+  padding:0.45rem 1rem;
+  border-radius:8px;
+  font-size:0.82rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.refresh-btn:hover{background:var(--accent-dim)}
 
-    .logo-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: #fff;
-    }
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
 
-    .logo-text span {
-      color: var(--gold);
-    }
+/* STATS */
+.stats-bar{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
+.stat-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem 1.5rem;
+  flex:1;
+  min-width:130px;
+  box-shadow:var(--shadow);
+}
+.stat-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.3rem}
+.stat-value{font-size:1.6rem;font-weight:600;color:var(--text);font-family:'Fraunces',serif}
+.stat-value.accent{color:var(--accent)}
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+/* TABS */
+.tabs{
+  display:flex;
+  gap:0.25rem;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:0.3rem;
+  width:fit-content;
+  margin-bottom:1.5rem;
+  box-shadow:var(--shadow);
+}
+.tab{
+  padding:0.55rem 1.25rem;
+  border-radius:8px;
+  font-size:0.85rem;
+  font-weight:500;
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;
+  white-space:nowrap;
+}
+.tab:hover{color:var(--text2)}
+.tab.active{background:var(--accent);color:#fff}
 
-    .last-update {
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
+/* FILTERS */
+.filters{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-right:0.25rem}
+.filter-btn{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--text2);
+  padding:0.38rem 0.9rem;
+  border-radius:20px;
+  font-size:0.8rem;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent-dim);font-weight:500}
 
-    .refresh-btn {
-      background: var(--border);
-      border: 1px solid var(--border-hover);
-      color: var(--muted2);
-      padding: 0.4rem 0.9rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
-    }
+/* SECTION TITLE */
+.section-title{
+  font-size:0.7rem;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  color:var(--muted);
+  margin-bottom:1.2rem;
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-    .refresh-btn:hover {
-      background: var(--border-hover);
-      color: var(--text);
-    }
+/* GRID */
+.deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem}
 
-    /* MAIN */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
+/* DEAL CARD */
+.deal-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.25rem;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  box-shadow:var(--shadow);
+  animation:fadeIn 0.3s ease both;
+  overflow:hidden;
+}
+.deal-card:hover{
+  box-shadow:var(--shadow-hover);
+  border-color:var(--border-dark);
+  transform:translateY(-2px);
+}
+.deal-card.expanded{
+  grid-column:1/-1;
+  cursor:default;
+  border-color:var(--accent);
+  box-shadow:var(--shadow-hover);
+}
 
-    /* STATS BAR */
-    .stats-bar {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem 1.5rem;
-      flex: 1;
-      min-width: 140px;
-    }
+/* CARD TOP */
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
 
-    .stat-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-    }
+.airline-badge{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+.airline-logo{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.03em;
+  color:#fff;
+  flex-shrink:0;
+}
+.airline-name{font-size:0.78rem;color:var(--text2);font-weight:500}
 
-    .stat-value {
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--text);
-    }
+.deal-tag{
+  background:var(--green-bg);
+  border:1px solid rgba(26,122,74,0.2);
+  color:var(--green);
+  padding:0.28rem 0.65rem;
+  border-radius:20px;
+  font-size:0.75rem;
+  font-weight:600;
+}
 
-    .stat-value.gold { color: var(--gold); }
+/* ROUTE */
+.route-section{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:1rem;
+  background:var(--bg);
+  border-radius:10px;
+  padding:0.85rem 1rem;
+}
+.route-point{flex:1}
+.route-time{
+  font-family:'Fraunces',serif;
+  font-size:1.4rem;
+  font-weight:600;
+  color:var(--text);
+  line-height:1;
+}
+.route-airport{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;text-transform:uppercase;letter-spacing:0.05em}
+.route-middle{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.2rem;
+  flex-shrink:0;
+}
+.route-line{
+  display:flex;
+  align-items:center;
+  gap:0.25rem;
+  width:80px;
+}
+.route-dot{width:6px;height:6px;border-radius:50%;background:var(--border-dark);flex-shrink:0}
+.route-dash{flex:1;height:1px;background:var(--border-dark)}
+.route-plane{font-size:0.85rem}
+.route-duration{font-size:0.7rem;color:var(--muted)}
 
-    /* TABS */
-    .tabs {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 1.5rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.3rem;
-      width: fit-content;
-    }
+/* CARD DATES */
+.card-dates{
+  display:flex;
+  gap:0.75rem;
+  margin-bottom:1rem;
+  flex-wrap:wrap;
+}
+.date-chip{
+  display:flex;
+  align-items:center;
+  gap:0.35rem;
+  font-size:0.78rem;
+  color:var(--text2);
+  background:var(--bg2);
+  padding:0.3rem 0.7rem;
+  border-radius:6px;
+}
 
-    .tab {
-      padding: 0.55rem 1.2rem;
-      border-radius: 7px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--tab-inactive);
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      white-space: nowrap;
-    }
+/* CARD FOOTER */
+.card-footer{display:flex;align-items:flex-end;justify-content:space-between}
+.price-block{}
+.price-rt{
+  font-family:'Fraunces',serif;
+  font-size:2rem;
+  font-weight:700;
+  color:var(--accent);
+  line-height:1;
+  letter-spacing:-0.02em;
+}
+.price-ow{font-size:0.75rem;color:var(--muted);margin-top:0.2rem}
+.price-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:0.1rem}
 
-    .tab:hover { color: var(--muted2); }
+.expand-hint{
+  font-size:0.75rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:0.3rem;
+}
 
-    .tab.active {
-      background: #1e2d45;
-      color: var(--tab-active);
-    }
+/* EXPANDED SECTION */
+.expanded-section{
+  display:none;
+  margin-top:1.25rem;
+  padding-top:1.25rem;
+  border-top:1px solid var(--border);
+  animation:fadeIn 0.2s ease;
+}
+.deal-card.expanded .expanded-section{display:block}
 
-    /* FILTERS */
-    .filters {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.booking-title{
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin-bottom:0.75rem;
+}
 
-    .filter-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-right: 0.25rem;
-    }
+.booking-links{display:flex;gap:0.75rem;flex-wrap:wrap}
+.booking-btn{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.6rem 1.1rem;
+  border-radius:8px;
+  font-size:0.82rem;
+  font-weight:500;
+  text-decoration:none;
+  transition:all 0.2s;
+  border:1px solid transparent;
+  font-family:'DM Sans',sans-serif;
+}
+.booking-btn.google{background:#4285f4;color:#fff}
+.booking-btn.google:hover{background:#2563eb}
+.booking-btn.skyscanner{background:#00b0ff;color:#fff}
+.booking-btn.skyscanner:hover{background:#0088cc}
+.booking-btn.airline{background:var(--accent-light);color:var(--accent-dim);border-color:rgba(193,127,58,0.3)}
+.booking-btn.airline:hover{background:var(--accent);color:#fff}
 
-    .filter-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted2);
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
-    }
+.close-btn{
+  margin-top:1rem;
+  background:none;
+  border:1px solid var(--border);
+  color:var(--muted);
+  padding:0.4rem 1rem;
+  border-radius:8px;
+  font-size:0.8rem;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;
+}
+.close-btn:hover{border-color:var(--border-dark);color:var(--text2)}
 
-    .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
-    .filter-btn.active { background: #1e2d45; border-color: #2a4a6e; color: #fff; }
+/* EMPTY */
+.state-box{
+  grid-column:1/-1;
+  text-align:center;
+  padding:4rem 2rem;
+  color:var(--muted);
+}
+.state-box .icon{font-size:2.5rem;margin-bottom:1rem}
+.state-box p{font-size:0.9rem;line-height:1.7}
 
-    /* GRID */
-    .deals-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1rem;
-    }
+.spinner{
+  width:30px;height:30px;
+  border:2px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+  margin:0 auto 1rem;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-    /* DEAL CARD */
-    .deal-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
-      transition: all 0.25s ease;
-      cursor: default;
-      position: relative;
-      overflow: hidden;
-      animation: fadeIn 0.3s ease both;
-    }
-
-    .deal-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .deal-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,165,0,0.08);
-    }
-
-    .deal-card:hover::before { opacity: 1; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* CARD HEADER */
-    .card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    .route {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .airport-code {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: 0.05em;
-    }
-
-    .route-arrow {
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin: 0 0.1rem;
-    }
-
-    .city-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.25rem 0.6rem;
-      font-size: 0.78rem;
-      color: var(--muted2);
-    }
-
-    /* CARD META */
-    .card-meta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      color: var(--muted2);
-    }
-
-    .meta-icon { font-size: 0.75rem; }
-
-    /* CARD FOOTER */
-    .card-footer {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-    }
-
-    .price-block {}
-
-    .price {
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--gold);
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-
-    .price-label {
-      font-size: 0.68rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 0.2rem;
-    }
-
-    .deal-badge {
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--green);
-      padding: 0.35rem 0.7rem;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-
-    .airline-tag {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--muted2);
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-size: 0.72rem;
-    }
-
-    /* DIVIDER */
-    .card-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 0.9rem 0;
-    }
-
-    /* EMPTY / LOADING */
-    .state-box {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--muted);
-    }
-
-    .state-box .icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .state-box p { font-size: 0.9rem; line-height: 1.6; }
-
-    .spinner {
-      width: 32px; height: 32px;
-      border: 2px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 640px) {
-      header { padding: 0 1rem; }
-      main { padding: 1rem; }
-      .deals-grid { grid-template-columns: 1fr; }
-      .tabs { width: 100%; }
-      .tab { flex: 1; text-align: center; }
-    }
-  </style>
+@media(max-width:640px){
+  header{padding:0 1rem}
+  main{padding:1rem}
+  .deals-grid{grid-template-columns:1fr}
+  .tabs{width:100%}
+  .tab{flex:1;text-align:center;padding:0.5rem 0.5rem}
+}
+</style>
 </head>
 <body>
 
@@ -426,202 +392,314 @@
 </header>
 
 <main>
-
-  <div class="stats-bar" id="statsBar">
+  <div class="stats-bar">
     <div class="stat-card">
       <div class="stat-label">Deals actifs</div>
       <div class="stat-value" id="statTotal">—</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Meilleur prix</div>
-      <div class="stat-value gold" id="statBest">—</div>
+      <div class="stat-value accent" id="statBest">—</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Destinations</div>
       <div class="stat-value">15</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Sources</div>
+      <div class="stat-label">Aéroports</div>
       <div class="stat-value">CDG · ORY</div>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('1jour', this)">🗓 1 Jour</button>
-    <button class="tab" onclick="switchTab('weekend', this)">📅 Week-end</button>
-    <button class="tab" onclick="switchTab('best', this)">🏆 Meilleurs</button>
-    <button class="tab" onclick="switchTab('hotel', this)">🏨 Hôtels</button>
+    <button class="tab active" onclick="switchTab('1jour',this)">🗓 1 Jour</button>
+    <button class="tab" onclick="switchTab('weekend',this)">📅 Week-end</button>
+    <button class="tab" onclick="switchTab('best',this)">🏆 Meilleurs</button>
+    <button class="tab" onclick="switchTab('hotel',this)">🏨 Hôtels</button>
   </div>
 
   <div class="filters">
     <span class="filter-label">Départ</span>
-    <button class="filter-btn active" onclick="setOrigin('all', this)">Tous</button>
-    <button class="filter-btn" onclick="setOrigin('CDG', this)">CDG Paris-Charles de Gaulle</button>
-    <button class="filter-btn" onclick="setOrigin('ORY', this)">ORY Paris-Orly</button>
+    <button class="filter-btn active" onclick="setOrigin('all',this)">Tous</button>
+    <button class="filter-btn" onclick="setOrigin('CDG',this)">CDG — Charles de Gaulle</button>
+    <button class="filter-btn" onclick="setOrigin('ORY',this)">ORY — Orly</button>
   </div>
 
   <div class="section-title" id="sectionTitle">Deals 1 journée week-end</div>
-
   <div class="deals-grid" id="dealsGrid">
-    <div class="state-box">
-      <div class="spinner"></div>
-      <p>Chargement des deals...</p>
-    </div>
+    <div class="state-box"><div class="spinner"></div><p>Chargement des deals...</p></div>
   </div>
-
 </main>
 
 <script>
-  const SUPABASE_URL = 'https://idihvrjjhutgvvqauogz.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkaWh2cmpqaHV0Z3Z2cWF1b2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNDA2MjEsImV4cCI6MjA5MjgxNjYyMX0.LsBCE-g4JI1rkG0x7UDpo8S676jmJ0JMISHZhnId6Zw';
+const SUPABASE_URL='https://idihvrjjhutgvvqauogz.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkaWh2cmpqaHV0Z3Z2cWF1b2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNDA2MjEsImV4cCI6MjA5MjgxNjYyMX0.LsBCE-g4JI1rkG0x7UDpo8S676jmJ0JMISHZhnId6Zw';
 
-  const FLAGS = {
-    BCN: '🇪🇸', MAD: '🇪🇸', LIS: '🇵🇹', AMS: '🇳🇱', LHR: '🇬🇧',
-    SVQ: '🇪🇸', VLC: '🇪🇸', PRG: '🇨🇿', VIE: '🇦🇹', CPH: '🇩🇰',
-    NAP: '🇮🇹', WAW: '🇵🇱', ARN: '🇸🇪', ATH: '🇬🇷', SPU: '🇭🇷'
+const FLAGS={BCN:'🇪🇸',MAD:'🇪🇸',LIS:'🇵🇹',AMS:'🇳🇱',LHR:'🇬🇧',SVQ:'🇪🇸',VLC:'🇪🇸',PRG:'🇨🇿',VIE:'🇦🇹',CPH:'🇩🇰',NAP:'🇮🇹',WAW:'🇵🇱',ARN:'🇸🇪',ATH:'🇬🇷',SPU:'🇭🇷'};
+
+const LABELS={'1jour':'Deals 1 journée week-end','weekend':'Deals week-end (ven → dim)','best':'Meilleurs deals toutes dates','hotel':'Hôtels'};
+
+const AIRLINE_STYLES={
+  'Air France':{bg:'#002157',short:'AF'},
+  'Transavia':{bg:'#00a650',short:'TO'},
+  'Vueling':{bg:'#ffd700',color:'#1a1a1a',short:'VY'},
+  'Iberia':{bg:'#c8102e',short:'IB'},
+  'TAP':{bg:'#00843d',short:'TP'},
+  'easyJet':{bg:'#ff6600',short:'U2'},
+  'Ryanair':{bg:'#073590',short:'FR'},
+  'KLM':{bg:'#009FDB',short:'KL'},
+  'British Airways':{bg:'#2b5eac',short:'BA'},
+  'Aegean':{bg:'#003580',short:'A3'},
+  'Aer Lingus':{bg:'#007749',short:'EI'},
+  'Austrian':{bg:'#CC0001',short:'OS'},
+  'Czech Airlines':{bg:'#cc0000',short:'OK'},
+  'SAS':{bg:'#000099',short:'SK'},
+  'ITA Airways':{bg:'#006bb6',short:'AZ'},
+  'Lufthansa':{bg:'#05164d',short:'LH'},
+};
+
+function getAirlineStyle(name){
+  if(!name) return {bg:'#8a8480',short:'?'};
+  for(const[key,val] of Object.entries(AIRLINE_STYLES)){
+    if(name.toLowerCase().includes(key.toLowerCase())) return val;
+  }
+  return {bg:'#8a8480',short:(name.slice(0,2).toUpperCase())};
+}
+
+function buildGoogleFlightsUrl(origin,dest,depDate,retDate){
+  const dep=depDate?depDate.replace(/-/g,''):'';
+  const ret=retDate&&retDate!==depDate?retDate.replace(/-/g,''):'';
+  if(ret) return `https://www.google.com/travel/flights?q=Flights+from+${origin}+to+${dest}+on+${depDate}+returning+${retDate}`;
+  return `https://www.google.com/travel/flights?q=Flights+from+${origin}+to+${dest}+on+${depDate}`;
+}
+
+function buildSkyscannerUrl(origin,dest,depDate,retDate){
+  const dep=depDate?depDate.replace(/-/g,'').slice(0,6):'';
+  const ret=retDate&&retDate!==depDate?retDate.replace(/-/g,'').slice(0,6):'';
+  if(ret) return `https://www.skyscanner.fr/transport/vols/${origin.toLowerCase()}/${dest.toLowerCase()}/${dep}/${ret}/`;
+  return `https://www.skyscanner.fr/transport/vols/${origin.toLowerCase()}/${dest.toLowerCase()}/${dep}/`;
+}
+
+function getAirlineUrl(airline){
+  const urls={
+    'air france':'https://www.airfrance.fr',
+    'transavia':'https://www.transavia.com',
+    'vueling':'https://www.vueling.com',
+    'iberia':'https://www.iberia.com',
+    'tap':'https://www.flytap.com',
+    'easyjet':'https://www.easyjet.com',
+    'klm':'https://www.klm.fr',
+    'british airways':'https://www.britishairways.com',
+    'aegean':'https://en.aegeanair.com',
+    'aer lingus':'https://www.aerlingus.com',
+    'austrian':'https://www.austrian.com',
+    'sas':'https://www.flysas.com',
+    'ita airways':'https://www.itaairways.com',
+    'lufthansa':'https://www.lufthansa.com',
   };
+  if(!airline) return '#';
+  const key=airline.toLowerCase();
+  for(const[k,v] of Object.entries(urls)){
+    if(key.includes(k)) return v;
+  }
+  return '#';
+}
 
-  const LABELS = {
-    '1jour': 'Deals 1 journée week-end',
-    'weekend': 'Deals week-end (ven → dim)',
-    'best': 'Meilleurs deals toutes dates',
-    'hotel': 'Hôtels'
-  };
+let currentTab='1jour';
+let currentOrigin='all';
+let allData={};
+let expandedId=null;
 
-  let currentTab = '1jour';
-  let currentOrigin = 'all';
-  let allData = {};
+async function fetchDeals(type){
+  const res=await fetch(
+    `${SUPABASE_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=200`,
+    {headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}}
+  );
+  return res.json();
+}
 
-  async function fetchDeals(type) {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=100`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-    );
-    return res.json();
+async function loadAll(){
+  document.getElementById('lastUpdate').textContent='Actualisation...';
+  try{
+    const[jour,weekend,best]=await Promise.all([
+      fetchDeals('1jour'),
+      fetchDeals('weekend'),
+      fetchDeals('best')
+    ]);
+    allData={'1jour':jour,'weekend':weekend,'best':best,'hotel':[]};
+    updateStats();
+    renderDeals();
+    const now=new Date();
+    document.getElementById('lastUpdate').textContent=`Mis à jour ${now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`;
+  }catch(e){
+    document.getElementById('lastUpdate').textContent='Erreur de chargement';
+  }
+}
+
+function updateStats(){
+  const all=[...(allData['1jour']||[]),...(allData['weekend']||[]),...(allData['best']||[])];
+  document.getElementById('statTotal').textContent=all.length;
+  const prices=all.map(d=>d.price).filter(Boolean);
+  if(prices.length) document.getElementById('statBest').textContent=Math.min(...prices)+'€';
+}
+
+function renderDeals(){
+  const grid=document.getElementById('dealsGrid');
+  document.getElementById('sectionTitle').textContent=LABELS[currentTab]||'';
+  expandedId=null;
+
+  if(currentTab==='hotel'){
+    grid.innerHTML=`<div class="state-box"><div class="icon">🏨</div><p>Section hôtels bientôt disponible.<br>Les meilleurs deals de nuits en Europe arrivent.</p></div>`;
+    return;
   }
 
-  async function loadAll() {
-    document.getElementById('lastUpdate').textContent = 'Actualisation...';
-    try {
-      const [jour, weekend, best] = await Promise.all([
-        fetchDeals('1jour'),
-        fetchDeals('weekend'),
-        fetchDeals('best')
-      ]);
-      allData = { '1jour': jour, 'weekend': weekend, 'best': best, 'hotel': [] };
-      updateStats();
-      renderDeals();
-      const now = new Date();
-      document.getElementById('lastUpdate').textContent =
-        `Mis à jour ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
-    } catch(e) {
-      document.getElementById('lastUpdate').textContent = 'Erreur de chargement';
-    }
+  let deals=allData[currentTab]||[];
+  if(currentOrigin!=='all') deals=deals.filter(d=>d.origin===currentOrigin);
+
+  if(!deals.length){
+    grid.innerHTML=`<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé.<br>Le radar tourne en continu, reviens dans quelques heures.</p></div>`;
+    return;
   }
 
-  function updateStats() {
-    const all = [...(allData['1jour']||[]), ...(allData['weekend']||[]), ...(allData['best']||[])];
-    document.getElementById('statTotal').textContent = all.length;
-    const prices = all.map(d => d.price).filter(Boolean);
-    if (prices.length) {
-      document.getElementById('statBest').textContent = Math.min(...prices) + '€';
-    }
-  }
+  // Dédoublonnage
+  const best={};
+  deals.forEach(d=>{
+    const key=`${d.origin}-${d.destination}-${d.departure_date}`;
+    if(!best[key]||d.price<best[key].price) best[key]=d;
+  });
+  const unique=Object.values(best);
+  grid.innerHTML=unique.map((d,i)=>cardHTML(d,i)).join('');
+}
 
-  function renderDeals() {
-    const grid = document.getElementById('dealsGrid');
-    document.getElementById('sectionTitle').textContent = LABELS[currentTab] || '';
+function cardHTML(d,i){
+  const flag=FLAGS[d.destination]||'🌍';
+  const score=d.deal_score||0;
+  const pct=Math.round(score*100);
+  const dealTag=pct>=15?`<span class="deal-tag">🔥 -${pct}%</span>`:'';
 
-    if (currentTab === 'hotel') {
-      grid.innerHTML = `<div class="state-box"><div class="icon">🏨</div><p>Section hôtels bientôt disponible.<br>Les meilleurs deals de nuits en Europe arrivent.</p></div>`;
-      return;
-    }
+  const style=getAirlineStyle(d.airline||'');
+  const logoColor=style.color||'#fff';
 
-    let deals = allData[currentTab] || [];
-    if (currentOrigin !== 'all') {
-      deals = deals.filter(d => d.origin === currentOrigin);
-    }
+  const depTime=d.departure_time?d.departure_time.slice(0,8):'—';
+  const arrTime=d.arrival_time?d.arrival_time.slice(0,8):'—';
+  const duration=d.duration||'';
+  const stops=d.stops===0?'Direct':d.stops===1?'1 escale':`${d.stops} escales`;
 
-    if (!deals.length) {
-      grid.innerHTML = `<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé pour ce filtre.<br>Reviens dans quelques heures, le radar tourne en continu.</p></div>`;
-      return;
-    }
+  const depDate=d.departure_date?new Date(d.departure_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}):'—';
+  const retDate=d.return_date&&d.return_date!==d.departure_date?new Date(d.return_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}):null;
 
-    // Dédoublonnage : meilleur prix par destination
-    const best = {};
-    deals.forEach(d => {
-      const key = `${d.origin}-${d.destination}-${d.departure_date}`;
-      if (!best[key] || d.price < best[key].price) best[key] = d;
-    });
-    const unique = Object.values(best);
+  const priceRT=d.price?Math.round(d.price)+'€':'—';
+  const priceOW=d.price?Math.round(d.price/2)+'€/trajet':'';
 
-    grid.innerHTML = unique.map((d, i) => cardHTML(d, i)).join('');
-  }
+  const gUrl=buildGoogleFlightsUrl(d.origin,d.destination,d.departure_date,d.return_date);
+  const sUrl=buildSkyscannerUrl(d.origin,d.destination,d.departure_date,d.return_date);
+  const aUrl=getAirlineUrl(d.airline||'');
 
-  function cardHTML(d, i) {
-    const flag = FLAGS[d.destination] || '🌍';
-    const score = d.deal_score || 0;
-    const pct = Math.round(score * 100);
-    const dealBadge = pct >= 15
-      ? `<span class="deal-badge">🔥 -${pct}%</span>`
-      : `<span class="airline-tag">${d.airline || 'N/A'}</span>`;
-
-    const depDate = d.departure_date ? new Date(d.departure_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '—';
-    const retDate = (d.return_date && d.return_date !== d.departure_date)
-      ? new Date(d.return_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
-      : null;
-
-    const dateStr = retDate
-      ? `${depDate} → ${retDate}`
-      : depDate;
-
-    return `
-      <div class="deal-card" style="animation-delay:${i * 0.04}s">
-        <div class="card-header">
-          <div class="route">
-            <span class="airport-code">${d.origin}</span>
-            <span class="route-arrow">→</span>
-            <span class="airport-code">${d.destination}</span>
-          </div>
-          <div class="city-badge">${flag} ${d.city_name || d.destination}</div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-item">
-            <span class="meta-icon">🗓</span>
-            <span>${dateStr}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-icon">✈</span>
-            <span>${d.airline || 'N/A'}</span>
-          </div>
-        </div>
-        <hr class="card-divider"/>
-        <div class="card-footer">
-          <div class="price-block">
-            <div class="price">${d.price ? Math.round(d.price) + '€' : '—'}</div>
-            <div class="price-label">aller-retour · éco</div>
-          </div>
-          ${dealBadge}
-        </div>
+  const id=`card-${i}`;
+  return `
+<div class="deal-card" id="${id}" onclick="toggleExpand('${id}')" style="animation-delay:${i*0.04}s">
+  <div class="card-top">
+    <div class="airline-badge">
+      <div class="airline-logo" style="background:${style.bg};color:${logoColor}">${style.short}</div>
+      <div>
+        <div class="airline-name">${d.airline||'N/A'}</div>
+        <div style="font-size:0.7rem;color:var(--muted)">${stops}</div>
       </div>
-    `;
-  }
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem">
+      ${dealTag}
+      <span style="font-size:0.8rem;color:var(--muted)">${flag} ${d.city_name||d.destination}</span>
+    </div>
+  </div>
 
-  function switchTab(tab, el) {
-    currentTab = tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    renderDeals();
-  }
+  <div class="route-section">
+    <div class="route-point">
+      <div class="route-time">${depTime}</div>
+      <div class="route-airport">${d.origin}</div>
+    </div>
+    <div class="route-middle">
+      <div class="route-line">
+        <div class="route-dot"></div>
+        <div class="route-dash"></div>
+        <span class="route-plane">✈</span>
+        <div class="route-dash"></div>
+        <div class="route-dot"></div>
+      </div>
+      <div class="route-duration">${duration}</div>
+    </div>
+    <div class="route-point" style="text-align:right">
+      <div class="route-time">${arrTime}</div>
+      <div class="route-airport">${d.destination}</div>
+    </div>
+  </div>
 
-  function setOrigin(origin, el) {
-    currentOrigin = origin;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    renderDeals();
-  }
+  <div class="card-dates">
+    <span class="date-chip">🛫 ${depDate}</span>
+    ${retDate?`<span class="date-chip">🛬 ${retDate}</span>`:''}
+  </div>
 
-  loadAll();
+  <div class="card-footer">
+    <div class="price-block">
+      <div class="price-rt">${priceRT}</div>
+      <div class="price-ow">${priceOW}</div>
+      <div class="price-label">aller-retour · économie</div>
+    </div>
+    <span class="expand-hint">Voir détails ↓</span>
+  </div>
+
+  <div class="expanded-section">
+    <div class="booking-title">Réserver ce vol</div>
+    <div class="booking-links">
+      <a class="booking-btn google" href="${gUrl}" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Google Flights
+      </a>
+      <a class="booking-btn skyscanner" href="${sUrl}" target="_blank" rel="noopener">
+        ✦ Skyscanner
+      </a>
+      <a class="booking-btn airline" href="${aUrl}" target="_blank" rel="noopener">
+        ✈ Site ${d.airline||'compagnie'}
+      </a>
+    </div>
+    <button class="close-btn" onclick="closeCard(event,'${id}')">✕ Fermer</button>
+  </div>
+</div>`;
+}
+
+function toggleExpand(id){
+  const card=document.getElementById(id);
+  if(!card) return;
+  const wasExpanded=card.classList.contains('expanded');
+  document.querySelectorAll('.deal-card.expanded').forEach(c=>c.classList.remove('expanded'));
+  if(!wasExpanded){
+    card.classList.add('expanded');
+    expandedId=id;
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  }
+}
+
+function closeCard(e,id){
+  e.stopPropagation();
+  const card=document.getElementById(id);
+  if(card) card.classList.remove('expanded');
+  expandedId=null;
+}
+
+function switchTab(tab,el){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderDeals();
+}
+
+function setOrigin(origin,el){
+  currentOrigin=origin;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderDeals();
+}
+
+loadAll();
 </script>
 </body>
 </html>
