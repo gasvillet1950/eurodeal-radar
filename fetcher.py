@@ -69,7 +69,11 @@ def extract_flight_info(f):
     departure_time = clean_time(getattr(f, 'departure', None))
     arrival_time = clean_time(getattr(f, 'arrival', None))
     duration = clean_time(getattr(f, 'duration', None))
-    stops = getattr(f, 'stops', 0) or 0
+    raw_stops = getattr(f, 'stops', 0)
+    try:
+        stops = int(raw_stops)
+    except (ValueError, TypeError):
+        stops = 0
     airline = getattr(f, 'name', None) or getattr(f, 'airline', 'N/A')
     return departure_time, arrival_time, duration, stops, airline
 
