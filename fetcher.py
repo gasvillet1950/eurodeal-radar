@@ -25,11 +25,11 @@ def clean_time(t):
 
 
 def parse_hour(time_str):
-    """Extrait l'heure en format 24h depuis une string type '8:10 AM on Sat'"""
     if not time_str:
         return None
     try:
-        m = __import__('re').search(r'(\d{1,2}):(\d{2})\s*(AM|PM)?', time_str, __import__('re').IGNORECASE)
+        import re
+        m = re.search(r'(\d{1,2}):(\d{2})\s*(AM|PM)?', time_str, re.IGNORECASE)
         if not m:
             return None
         h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3)
@@ -138,19 +138,16 @@ def process_oneday_deals():
             for day in weekenddays[:8]:
                 dep_dt = datetime.combine(day, datetime.min.time())
 
-                # Vol aller
                 f_out = fetch_ow(origin, dest["iata"], dep_dt)
                 if not f_out:
                     continue
 
                 dep_t, arr_t, dur, stops, airline = extract_info(f_out)
 
-                # Vérif : départ avant 9h
                 dep_hour = parse_hour(dep_t)
-                if dep_hour is None or dep_hour >= 9:
+                if dep_hour is None or dep_hour >= 10:
                     continue
 
-                # Vol retour le même jour
                 f_ret = fetch_ow(dest["iata"], origin, dep_dt)
                 if not f_ret:
                     continue
@@ -158,12 +155,10 @@ def process_oneday_deals():
                 ret_dep_t = clean_time(getattr(f_ret, 'departure', None))
                 ret_arr_t = clean_time(getattr(f_ret, 'arrival', None))
 
-                # Vérif : arrivée retour après 17h
                 arr_hour = parse_hour(ret_arr_t)
-                if arr_hour is None or arr_hour < 17:
+                if arr_hour is None or arr_hour < 16:
                     continue
 
-                # Prix = aller + retour séparés
                 price_out = clean_price(f_out.price)
                 price_ret = clean_price(f_ret.price)
                 if price_out is None or price_ret is None:
