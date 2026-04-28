@@ -117,7 +117,7 @@ def process_oneday_deals():
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
-            for day in weekenddays[:4]:
+            for day in weekenddays[:24]:  # 3 mois
                 dep_dt = datetime.combine(day, datetime.min.time())
 
                 f_out = fetch_ow(origin, dest["iata"], dep_dt)
@@ -142,21 +142,21 @@ def process_oneday_deals():
                 price = round(price_out + price_ret, 2)
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
-                if avg is None or score >= DEAL_THRESHOLD:
-                    save_flight_deal(
-                        origin, dest["iata"], dest["city"], price, day, day,
-                        airline, "1jour", score,
-                        dep_t, arr_t, dur, stops,
-                        ret_dep_t, ret_arr_t
-                    )
-                    print(f"  ✅ 1J {origin}→{dest['iata']} {day} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
+                # Toujours sauvegarder — pas de filtre de score pour 1 jour
+                save_flight_deal(
+                    origin, dest["iata"], dest["city"], price, day, day,
+                    airline, "1jour", score,
+                    dep_t, arr_t, dur, stops,
+                    ret_dep_t, ret_arr_t
+                )
+                print(f"  ✅ 1J {origin}→{dest['iata']} {day} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
 
 
 def process_weekend_deals():
     print("→ Deals week-end...")
     today = datetime.today()
     weekends = []
-    for i in range(60):
+    for i in range(90):
         d = today + timedelta(days=i)
         if d.weekday() == 4:
             weekends.append((d.date(), (d + timedelta(days=2)).date()))
@@ -164,7 +164,7 @@ def process_weekend_deals():
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
-            for dep, ret in weekends[:2]:
+            for dep, ret in weekends[:12]:  # 3 mois
                 flights = fetch_rt(origin, dest["iata"],
                     datetime.combine(dep, datetime.min.time()),
                     datetime.combine(ret, datetime.min.time()))
@@ -183,39 +183,41 @@ def process_weekend_deals():
 
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
-                if avg is None or score >= DEAL_THRESHOLD:
-                    save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret,
-                                     airline, "weekend", score,
-                                     dep_t, arr_t, dur, stops, ret_dep_t, ret_arr_t)
-                    print(f"  ✅ WE {origin}→{dest['iata']} {dep} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
+                # Toujours sauvegarder — pas de filtre de score pour week-end
+                save_flight_deal(origin, dest["iata"], dest["city"], price, dep, ret,
+                                 airline, "weekend", score,
+                                 dep_t, arr_t, dur, stops, ret_dep_t, ret_arr_t)
+                print(f"  ✅ WE {origin}→{dest['iata']} {dep} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
 
 
 def process_best_deals():
     print("→ Meilleurs deals globaux...")
     today = datetime.today()
+    # 3 fenêtres : J+30, J+60, J+90
+    windows = [30, 60, 90]
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
-            dep = today + timedelta(days=30)
-            ret = dep + timedelta(days=3)
-            flights = fetch_rt(origin, dest["iata"], dep, ret)
-            if not flights:
-                continue
-            f_out = flights[0]
-            f_ret = flights[1] if len(flights) > 1 else None
-            price = clean_price(f_out.price)
-            if price is None:
-                continue
-            dep_t, arr_t, dur, stops, airline = extract_info(f_out)
-            ret_dep_t = clean_time(getattr(f_ret, 'departure', None)) if f_ret else None
-            ret_arr_t = clean_time(getattr(f_ret, 'arrival', None)) if f_ret else None
-            save_price_history(origin, dest["iata"], price)
-            score = compute_deal_score(price, avg)
-            if avg is None or score >= DEAL_THRESHOLD:
+            for days_ahead in windows:
+                dep = today + timedelta(days=days_ahead)
+                ret = dep + timedelta(days=3)
+                flights = fetch_rt(origin, dest["iata"], dep, ret)
+                if not flights:
+                    continue
+                f_out = flights[0]
+                f_ret = flights[1] if len(flights) > 1 else None
+                price = clean_price(f_out.price)
+                if price is None:
+                    continue
+                dep_t, arr_t, dur, stops, airline = extract_info(f_out)
+                ret_dep_t = clean_time(getattr(f_ret, 'departure', None)) if f_ret else None
+                ret_arr_t = clean_time(getattr(f_ret, 'arrival', None)) if f_ret else None
+                save_price_history(origin, dest["iata"], price)
+                score = compute_deal_score(price, avg)
                 save_flight_deal(origin, dest["iata"], dest["city"], price, dep.date(), ret.date(),
                                  airline, "best", score,
                                  dep_t, arr_t, dur, stops, ret_dep_t, ret_arr_t)
-                print(f"  ✅ Best {origin}→{dest['iata']} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
+                print(f"  ✅ Best J+{days_ahead} {origin}→{dest['iata']} {price}€ | ✈ {dep_t}→{arr_t} | ↩ {ret_dep_t}→{ret_arr_t}")
 
 
 if __name__ == "__main__":
