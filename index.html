@@ -28,7 +28,7 @@ header{background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-botto
 .logo-text{font-size:1.05rem;font-weight:700;letter-spacing:-0.02em}
 .logo-text em{color:var(--accent);font-style:normal}
 .header-right{display:flex;align-items:center;gap:0.75rem}
-.next-refresh{font-size:0.7rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:0.25rem 0.7rem;border-radius:20px;display:flex;align-items:center;gap:0.35rem}
+.next-refresh{font-size:0.7rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:0.25rem 0.7rem;border-radius:20px}
 .update-pill{font-size:0.7rem;color:var(--muted);background:var(--bg2);border:1px solid var(--border);padding:0.25rem 0.7rem;border-radius:20px}
 .refresh-btn{background:var(--accent);border:none;color:#fff;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.15s;display:flex;align-items:center;gap:0.35rem}
 .refresh-btn:hover{background:var(--accent-dark)}
@@ -72,15 +72,6 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
 .month-dropdown button.active{background:var(--accent-light);color:var(--accent-dark);font-weight:600}
 .filter-reset{background:none;border:1px solid var(--border-dark);color:var(--muted);padding:0.3rem 0.75rem;border-radius:8px;font-size:0.75rem;cursor:pointer;font-family:var(--font);transition:all 0.15s;margin-left:auto;align-self:flex-end}
 .filter-reset:hover{color:var(--text2);border-color:var(--text2)}
-
-/* CARTE EUROPE */
-.map-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadow-sm)}
-.map-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between}
-.map-hint{font-size:0.7rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
-#europeMap{width:100%;height:220px;cursor:pointer}
-.map-dot{cursor:pointer;transition:all 0.15s}
-.map-dot:hover circle{r:9}
-.map-dot.active circle{fill:var(--accent)!important}
 
 .section-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -133,7 +124,6 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
 .expanded-panel{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);animation:fadeUp 0.2s ease}
 .deal-card.expanded .expanded-panel{display:block}
 
-/* GRAPHIQUE PRIX */
 .price-chart-section{margin-bottom:1rem}
 .chart-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem}
 .chart-wrap{background:var(--bg);border-radius:8px;padding:0.75rem;overflow:hidden}
@@ -165,7 +155,6 @@ canvas.price-chart{width:100%!important;height:80px!important}
   .tabs{width:100%;overflow-x:auto}
   .tab{flex:1;text-align:center;padding:0.45rem 0.4rem;font-size:0.72rem}
   .filter-bar{gap:0.75rem}
-  #europeMap{height:160px}
 }
 </style>
 </head>
@@ -201,85 +190,6 @@ canvas.price-chart{width:100%!important;height:80px!important}
     <button class="tab new-badge" onclick="switchTab('new',this)">✨ Nouveautés</button>
     <button class="tab" onclick="switchTab('af',this)">✈️ AF · Corsica</button>
     <button class="tab" onclick="switchTab('hotel',this)">🏨 Hôtels</button>
-  </div>
-
-  <div class="map-section">
-    <div class="map-title">
-      🗺 Carte des destinations
-      <span class="map-hint">Clique sur une ville pour filtrer</span>
-    </div>
-    <svg id="europeMap" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-      <!-- Fond mer -->
-      <rect width="800" height="500" fill="#e8f4f8"/>
-      <!-- Contour Europe simplifié -->
-      <path d="M150,80 L200,60 L280,55 L350,50 L420,45 L500,50 L580,70 L650,90 L700,120 L720,160 L710,200 L690,240 L670,280 L640,320 L600,360 L560,390 L520,410 L480,420 L440,415 L400,400 L360,390 L320,380 L280,370 L240,350 L200,320 L170,290 L150,260 L130,230 L120,200 L115,170 L120,140 L135,110 Z" fill="#f0ede8" stroke="#d4cec6" stroke-width="1.5"/>
-      <!-- Points des destinations -->
-      <g class="map-dot" onclick="mapFilter('BCN')" id="dot-BCN">
-        <circle cx="230" cy="310" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="230" y="328" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">BCN</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('MAD')" id="dot-MAD">
-        <circle cx="185" cy="295" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="185" y="313" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">MAD</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('LIS')" id="dot-LIS">
-        <circle cx="145" cy="295" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="145" y="313" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">LIS</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('AMS')" id="dot-AMS">
-        <circle cx="330" cy="145" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="330" y="163" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">AMS</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('LHR')" id="dot-LHR">
-        <circle cx="278" cy="148" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="278" y="166" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">LHR</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('SVQ')" id="dot-SVQ">
-        <circle cx="175" cy="320" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="175" y="338" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">SVQ</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('VLC')" id="dot-VLC">
-        <circle cx="222" cy="300" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="222" y="318" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">VLC</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('PRG')" id="dot-PRG">
-        <circle cx="420" cy="175" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="420" y="193" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">PRG</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('VIE')" id="dot-VIE">
-        <circle cx="455" cy="185" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="455" y="203" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">VIE</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('CPH')" id="dot-CPH">
-        <circle cx="390" cy="110" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="390" y="128" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">CPH</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('NAP')" id="dot-NAP">
-        <circle cx="415" cy="285" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="415" y="303" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">NAP</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('WAW')" id="dot-WAW">
-        <circle cx="490" cy="155" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="490" y="173" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">WAW</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('ARN')" id="dot-ARN">
-        <circle cx="430" cy="80" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="430" y="98" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">ARN</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('ATH')" id="dot-ATH">
-        <circle cx="510" cy="320" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="510" y="338" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">ATH</text>
-      </g>
-      <g class="map-dot" onclick="mapFilter('SPU')" id="dot-SPU">
-        <circle cx="450" cy="255" r="7" fill="#d4763b" opacity="0.85"/>
-        <text x="450" y="273" text-anchor="middle" font-size="9" fill="#3d3a36" font-family="Inter,sans-serif" font-weight="600">SPU</text>
-      </g>
-      <!-- Paris (départ) -->
-      <g>
-        <circle cx="305" cy="178" r="8" fill="#002157" opacity="0.9"/>
-        <text x="305" y="196" text-anchor="middle" font-size="9" fill="#002157" font-family="Inter,sans-serif" font-weight="700">PAR</text>
-      </g>
-    </svg>
   </div>
 
   <div class="filter-bar">
@@ -393,12 +303,10 @@ function buildSkyscannerUrl(o,d,dep,ret){
   return ret&&ret!==dep?`${base}/${s(ret)}/`:`${base}/`;
 }
 
-// Compteur prochain refresh
 function updateNextRefresh(){
   const now=new Date();
   const hours=[6,12,18];
-  const utcH=now.getUTCHours();
-  const utcM=now.getUTCMinutes();
+  const utcH=now.getUTCHours(),utcM=now.getUTCMinutes();
   const nowMins=utcH*60+utcM;
   const nextMins=hours.map(h=>h*60).find(m=>m>nowMins)||(hours[0]*60+24*60);
   const diff=nextMins-nowMins;
@@ -408,7 +316,6 @@ function updateNextRefresh(){
 setInterval(updateNextRefresh,60000);
 updateNextRefresh();
 
-// Mois dropdown
 function buildMonthDropdown(){
   const dd=document.getElementById('monthDropdown');
   const now=new Date();
@@ -443,29 +350,23 @@ function toggleMonthDropdown(e){
   const dd=document.getElementById('monthDropdown');
   dd.style.display=dd.style.display==='block'?'none':'block';
 }
-document.addEventListener('click',()=>{
-  const dd=document.getElementById('monthDropdown');
-  if(dd) dd.style.display='none';
-});
+document.addEventListener('click',()=>{const dd=document.getElementById('monthDropdown');if(dd) dd.style.display='none'});
 
-// Tendance prix
 function getPriceTrend(origin,dest,currentPrice){
   const all=[...(allData['1jour']||[]),...(allData['weekend']||[]),...(allData['best']||[])];
   const history=all.filter(d=>d.origin===origin&&d.destination===dest&&d.price).map(d=>d.price);
-  if(history.length<2) return null;
+  if(history.length<3) return null;
   const avg=history.reduce((a,b)=>a+b,0)/history.length;
   const diff=((currentPrice-avg)/avg)*100;
-  if(Math.abs(diff)<3) return null;
+  if(Math.abs(diff)<5) return null;
   return diff>0?{dir:'up',pct:Math.round(diff)}:{dir:'down',pct:Math.round(Math.abs(diff))};
 }
 
-// Graphique prix
 const chartInstances={};
 function renderPriceChart(canvasId,origin,dest){
   const all=[...(allData['1jour']||[]),...(allData['weekend']||[]),...(allData['best']||[])];
   const history=all.filter(d=>d.origin===origin&&d.destination===dest&&d.price&&d.fetched_at)
-    .sort((a,b)=>new Date(a.fetched_at)-new Date(b.fetched_at))
-    .slice(-20);
+    .sort((a,b)=>new Date(a.fetched_at)-new Date(b.fetched_at)).slice(-20);
   if(history.length<2) return;
   const canvas=document.getElementById(canvasId);
   if(!canvas) return;
@@ -474,19 +375,10 @@ function renderPriceChart(canvasId,origin,dest){
     type:'line',
     data:{
       labels:history.map(d=>new Date(d.fetched_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})),
-      datasets:[{
-        data:history.map(d=>d.price),
-        borderColor:'#d4763b',
-        backgroundColor:'rgba(212,118,59,0.08)',
-        borderWidth:2,
-        pointRadius:2,
-        fill:true,
-        tension:0.4,
-      }]
+      datasets:[{data:history.map(d=>d.price),borderColor:'#d4763b',backgroundColor:'rgba(212,118,59,0.08)',borderWidth:2,pointRadius:2,fill:true,tension:0.4}]
     },
     options:{
-      responsive:true,
-      maintainAspectRatio:false,
+      responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y}€`}}},
       scales:{
         x:{grid:{display:false},ticks:{font:{size:9},color:'#7a756f',maxTicksLimit:6}},
@@ -500,16 +392,11 @@ let currentTab='1jour',allData={};
 let filters={origin:'all',month:'all',dest:'all',budget:null,airline:'all',sort:'price'};
 
 function isComplete(d){return d.price&&d.airline&&(d.departure_time||d.arrival_time)}
-function isNew(d){
-  if(!d.fetched_at) return false;
-  return (new Date()-new Date(d.fetched_at))<86400000;
-}
+function isNew(d){if(!d.fetched_at) return false;return(new Date()-new Date(d.fetched_at))<86400000}
 
 async function fetchDeals(type){
-  const r=await fetch(
-    `${SB_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=500`,
-    {headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}
-  );
+  const r=await fetch(`${SB_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=500`,
+    {headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
   return r.json();
 }
 
@@ -529,8 +416,7 @@ function updateStats(){
   document.getElementById('statTotal').textContent=all.length;
   const prices=all.map(d=>d.price).filter(Boolean);
   if(prices.length) document.getElementById('statBest').textContent=Math.min(...prices)+'€';
-  const newCount=all.filter(isNew).length;
-  document.getElementById('statNew').textContent=newCount;
+  document.getElementById('statNew').textContent=all.filter(isNew).length;
 }
 
 function populateAirlineFilter(){
@@ -562,8 +448,7 @@ function renderDeals(){
   document.getElementById('sectionTitle').childNodes[0].textContent=LABELS[currentTab]||'';
   if(currentTab==='hotel'){
     grid.innerHTML=`<div class="state-box"><div class="icon">🏨</div><p>Section hôtels bientôt disponible.</p></div>`;
-    document.getElementById('resultCount').textContent='';
-    return;
+    document.getElementById('resultCount').textContent='';return;
   }
   let deals=[];
   if(currentTab==='new'){
@@ -577,15 +462,13 @@ function renderDeals(){
   }
   document.getElementById('resultCount').textContent=`— ${deals.length} deal${deals.length>1?'s':''}`;
   if(!deals.length){
-    grid.innerHTML=`<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé avec ces filtres.</p></div>`;
-    return;
+    grid.innerHTML=`<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé avec ces filtres.</p></div>`;return;
   }
   grid.innerHTML=deals.map((d,i)=>cardHTML(d,i)).join('');
 }
 
 function flightRowHTML(label,depTime,depApt,arrTime,arrApt,stops){
-  const depT=fmtTime(depTime);
-  const arrT=fmtTime(arrTime);
+  const depT=fmtTime(depTime),arrT=fmtTime(arrTime);
   const stopsLabel=stops===0?'Direct':stops===1?'1 escale':`${stops} escales`;
   const stopsClass=stops===0?'fstops':'fstops stop';
   return `<div class="flight-row">
@@ -601,20 +484,19 @@ function flightRowHTML(label,depTime,depApt,arrTime,arrApt,stops){
 
 function cardHTML(d,i){
   const flag=FLAGS[d.destination]||'🌍';
-  const score=d.deal_score||0;
-  const pct=Math.round(score*100);
+  const score=d.deal_score||0,pct=Math.round(score*100);
   const badge=pct>=15?`<span class="deal-badge">🔥 -${pct}%</span>`:'';
   const hasReturn=d.return_date&&d.return_date!==d.departure_date;
   const {bg,text}=getColor(d.airline||'');
   const initials=(d.airline||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const trend=getPriceTrend(d.origin,d.destination,d.price);
   const trendHTML=trend?`<span class="price-trend ${trend.dir}">${trend.dir==='down'?'↓':'↑'}${trend.pct}%</span>`:'';
+  const newDot=isNew(d)?`<span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:0.3rem" title="Nouveau"></span>`:'';
   const gUrl=buildGoogleUrl(d.origin,d.destination,d.departure_date,d.return_date);
   const sUrl=buildSkyscannerUrl(d.origin,d.destination,d.departure_date,d.return_date);
   const aUrl=getAirlineUrl(d.airline||'');
   const chartId=`chart-${i}`;
   const id=`c${i}`;
-  const newDot=isNew(d)?`<span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:0.3rem" title="Nouveau"></span>`:'';
   const retRow=hasReturn?`<div class="fdivider"></div>${flightRowHTML('Ret.',d.return_departure_time,d.destination,d.return_arrival_time,d.origin,d.stops||0)}`:'';
   return `
 <div class="deal-card" id="${id}" onclick="toggleCard('${id}','${d.origin}','${d.destination}','${chartId}')" style="animation-delay:${Math.min(i*0.03,0.4)}s">
@@ -665,37 +547,20 @@ function toggleCard(id,origin,dest,chartId){
   if(!c) return;
   const was=c.classList.contains('expanded');
   document.querySelectorAll('.deal-card.expanded').forEach(x=>x.classList.remove('expanded'));
-  if(!was){
-    c.classList.add('expanded');
-    setTimeout(()=>{
-      c.scrollIntoView({behavior:'smooth',block:'nearest'});
-      renderPriceChart(chartId,origin,dest);
-    },50);
-  }
+  if(!was){c.classList.add('expanded');setTimeout(()=>{c.scrollIntoView({behavior:'smooth',block:'nearest'});renderPriceChart(chartId,origin,dest)},50)}
 }
 function closeCard(e,id){e.stopPropagation();const c=document.getElementById(id);if(c)c.classList.remove('expanded')}
 function switchTab(tab,el){currentTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderDeals()}
 function setFilter(key,val,el){filters[key]=val;el.closest('.filter-pills').querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderDeals()}
-function setDestFilter(val){
-  filters.dest=val;
-  // Sync carte
-  document.querySelectorAll('.map-dot').forEach(d=>d.classList.remove('active'));
-  if(val!=='all') document.getElementById('dot-'+val)?.classList.add('active');
-  renderDeals();
-}
+function setDestFilter(val){filters.dest=val;renderDeals()}
 function setAirlineFilter(val){filters.airline=val;renderDeals()}
 function setBudget(val){filters.budget=val?parseFloat(val):null;renderDeals()}
-function setSort(val,el){filters.sort=val;filters.month='all';document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('dateSortBtn').textContent='📅 Date ▾';document.getElementById('monthDropdown').querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active',i===0));renderDeals()}
-function mapFilter(iata){
-  const sel=document.getElementById('destSelect');
-  if(filters.dest===iata){
-    filters.dest='all';sel.value='all';
-    document.querySelectorAll('.map-dot').forEach(d=>d.classList.remove('active'));
-  } else {
-    filters.dest=iata;sel.value=iata;
-    document.querySelectorAll('.map-dot').forEach(d=>d.classList.remove('active'));
-    document.getElementById('dot-'+iata)?.classList.add('active');
-  }
+function setSort(val,el){
+  filters.sort=val;filters.month='all';
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('dateSortBtn').textContent='📅 Date ▾';
+  document.getElementById('monthDropdown').querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active',i===0));
   renderDeals();
 }
 function resetFilters(){
@@ -706,7 +571,6 @@ function resetFilters(){
   document.querySelectorAll('#originPills .fpill').forEach((b,i)=>b.classList.toggle('active',i===0));
   document.querySelectorAll('.sort-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   document.getElementById('dateSortBtn').textContent='📅 Date ▾';
-  document.querySelectorAll('.map-dot').forEach(d=>d.classList.remove('active'));
   renderDeals();
 }
 
