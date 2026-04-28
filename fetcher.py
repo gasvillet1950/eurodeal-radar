@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime, timedelta
 from supabase import create_client
 from fast_flights import FlightData, Passengers, Result, get_flights
@@ -22,25 +23,6 @@ def clean_time(t):
     if not t:
         return None
     return str(t).strip()[:30]
-
-
-def parse_hour(time_str):
-    if not time_str:
-        return None
-    try:
-        import re
-        m = re.search(r'(\d{1,2}):(\d{2})\s*(AM|PM)?', time_str, re.IGNORECASE)
-        if not m:
-            return None
-        h, mn, ap = int(m.group(1)), int(m.group(2)), m.group(3)
-        if ap:
-            if ap.upper() == 'PM' and h != 12:
-                h += 12
-            if ap.upper() == 'AM' and h == 12:
-                h = 0
-        return h + mn / 60
-    except:
-        return None
 
 
 def get_average_price(origin, destination):
@@ -135,7 +117,7 @@ def process_oneday_deals():
     for origin in ORIGINS:
         for dest in DESTINATIONS:
             avg = get_average_price(origin, dest["iata"])
-            for day in weekenddays[:8]:
+            for day in weekenddays[:4]:
                 dep_dt = datetime.combine(day, datetime.min.time())
 
                 f_out = fetch_ow(origin, dest["iata"], dep_dt)
@@ -143,9 +125,8 @@ def process_oneday_deals():
                     continue
 
                 dep_t, arr_t, dur, stops, airline = extract_info(f_out)
-
-                dep_hour = parse_hour(dep_t)
-                if dep_hour is None or dep_hour >= 10:
+                price_out = clean_price(f_out.price)
+                if price_out is None:
                     continue
 
                 f_ret = fetch_ow(dest["iata"], origin, dep_dt)
@@ -154,17 +135,11 @@ def process_oneday_deals():
 
                 ret_dep_t = clean_time(getattr(f_ret, 'departure', None))
                 ret_arr_t = clean_time(getattr(f_ret, 'arrival', None))
-
-                arr_hour = parse_hour(ret_arr_t)
-                if arr_hour is None or arr_hour < 16:
-                    continue
-
-                price_out = clean_price(f_out.price)
                 price_ret = clean_price(f_ret.price)
-                if price_out is None or price_ret is None:
+                if price_ret is None:
                     continue
-                price = round(price_out + price_ret, 2)
 
+                price = round(price_out + price_ret, 2)
                 save_price_history(origin, dest["iata"], price)
                 score = compute_deal_score(price, avg)
                 if avg is None or score >= DEAL_THRESHOLD:
