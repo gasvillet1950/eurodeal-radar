@@ -44,7 +44,6 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
 .tab:hover{color:var(--text2)}
 .tab.active{background:var(--accent);color:#fff;font-weight:600}
 
-/* FILTRES */
 .filter-bar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadow-sm);display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end}
 .filter-group{display:flex;flex-direction:column;gap:0.4rem}
 .filter-group label{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
@@ -161,7 +160,7 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
     <div class="stat-card"><div class="stat-label">Deals actifs</div><div class="stat-value" id="statTotal">—</div></div>
     <div class="stat-card"><div class="stat-label">Meilleur prix</div><div class="stat-value accent" id="statBest">—</div></div>
     <div class="stat-card"><div class="stat-label">Destinations</div><div class="stat-value">15</div></div>
-    <div class="stat-card"><div class="stat-label">Aéroports</div><div class="stat-value" style="font-size:0.95rem;padding-top:0.3rem">CDG · ORY</div></div>
+    <div class="stat-card"><div class="stat-label">Max prix</div><div class="stat-value accent">250€</div></div>
   </div>
 
   <div class="tabs">
@@ -175,11 +174,15 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
   <div class="filter-bar">
     <div class="filter-group">
       <label>Départ</label>
-      <div class="filter-pills">
+      <div class="filter-pills" id="originPills">
         <button class="fpill active" onclick="setFilter('origin','all',this)">Tous</button>
         <button class="fpill" onclick="setFilter('origin','CDG',this)">CDG</button>
         <button class="fpill" onclick="setFilter('origin','ORY',this)">ORY</button>
       </div>
+    </div>
+    <div class="filter-group">
+      <label>Mois</label>
+      <div class="filter-pills" id="monthPills"></div>
     </div>
     <div class="filter-group">
       <label>Destination</label>
@@ -205,7 +208,7 @@ main{max-width:1180px;margin:0 auto;padding:1.75rem 1.5rem}
     <div class="filter-group">
       <label>Budget max</label>
       <div class="budget-wrap">
-        <input class="budget-input" type="number" id="budgetInput" placeholder="ex: 300" min="0" max="2000" oninput="setBudget(this.value)"/>
+        <input class="budget-input" type="number" id="budgetInput" placeholder="250" min="0" max="250" oninput="setBudget(this.value)"/>
         <span class="budget-unit">€</span>
       </div>
     </div>
@@ -282,7 +285,6 @@ function isAF(name){
   const k=name.toLowerCase();
   return AF_AIRLINES.some(a=>k.includes(a));
 }
-
 function fmtTime(str){
   if(!str||str==='None') return null;
   const m=str.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
@@ -305,14 +307,51 @@ function buildSkyscannerUrl(o,d,dep,ret){
   return ret&&ret!==dep?`${base}/${s(ret)}/`:`${base}/`;
 }
 
+// Génère les 3 prochains mois automatiquement
+function buildMonthPills(){
+  const container=document.getElementById('monthPills');
+  const now=new Date();
+  const months=[];
+  for(let i=0;i<3;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
+    months.push({
+      label:d.toLocaleDateString('fr-FR',{month:'long'}),
+      value:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+    });
+  }
+  // Bouton "Tous"
+  const allBtn=document.createElement('button');
+  allBtn.className='fpill active';
+  allBtn.textContent='Tous';
+  allBtn.onclick=()=>{
+    filters.month='all';
+    container.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
+    allBtn.classList.add('active');
+    renderDeals();
+  };
+  container.appendChild(allBtn);
+  months.forEach(m=>{
+    const btn=document.createElement('button');
+    btn.className='fpill';
+    btn.textContent=m.label.charAt(0).toUpperCase()+m.label.slice(1);
+    btn.onclick=()=>{
+      filters.month=m.value;
+      container.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDeals();
+    };
+    container.appendChild(btn);
+  });
+}
+
 let currentTab='1jour',allData={};
-let filters={origin:'all',dest:'all',budget:null,airline:'all',sort:'price'};
+let filters={origin:'all',month:'all',dest:'all',budget:null,airline:'all',sort:'price'};
 
 function isComplete(d){return d.price&&d.airline&&(d.departure_time||d.arrival_time)}
 
 async function fetchDeals(type){
   const r=await fetch(
-    `${SB_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=300`,
+    `${SB_URL}/rest/v1/flights_deals?deal_type=eq.${type}&order=price.asc&limit=500`,
     {headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}
   );
   return r.json();
@@ -345,26 +384,23 @@ function populateAirlineFilter(){
   sel.innerHTML='<option value="all">Toutes</option>';
   airlines.forEach(a=>{
     const o=document.createElement('option');
-    o.value=a;o.textContent=a;
-    sel.appendChild(o);
+    o.value=a;o.textContent=a;sel.appendChild(o);
   });
 }
 
 function applyFilters(deals){
   let d=deals.filter(isComplete);
   if(filters.origin!=='all') d=d.filter(x=>x.origin===filters.origin);
+  if(filters.month!=='all') d=d.filter(x=>x.departure_date&&x.departure_date.startsWith(filters.month));
   if(filters.dest!=='all') d=d.filter(x=>x.destination===filters.dest);
   if(filters.budget) d=d.filter(x=>x.price<=filters.budget);
   if(filters.airline!=='all') d=d.filter(x=>x.airline===filters.airline);
-
-  // Dédoublonnage
   const best={};
   d.forEach(x=>{
     const k=`${x.origin}-${x.destination}-${x.departure_date}`;
     if(!best[k]||x.price<best[k].price) best[k]=x;
   });
   d=Object.values(best);
-
   if(filters.sort==='price') d.sort((a,b)=>a.price-b.price);
   else if(filters.sort==='score') d.sort((a,b)=>(b.deal_score||0)-(a.deal_score||0));
   else if(filters.sort==='date') d.sort((a,b)=>new Date(a.departure_date)-new Date(b.departure_date));
@@ -374,7 +410,6 @@ function applyFilters(deals){
 function renderDeals(){
   const grid=document.getElementById('dealsGrid');
   document.getElementById('sectionTitle').childNodes[0].textContent=LABELS[currentTab]||'';
-
   if(currentTab==='hotel'){
     grid.innerHTML=`<div class="state-box"><div class="icon">🏨</div><p>Section hôtels bientôt disponible.</p></div>`;
     document.getElementById('resultCount').textContent='';
@@ -385,16 +420,14 @@ function renderDeals(){
     const afDeals=applyFilters(allDeals.filter(d=>isAF(d.airline)));
     document.getElementById('resultCount').textContent=`— ${afDeals.length} deal${afDeals.length>1?'s':''}`;
     if(!afDeals.length){
-      grid.innerHTML=`<div class="state-box"><div class="icon">✈️</div><p>Aucun deal Air France ou Air Corsica trouvé.<br>Reviens plus tard.</p></div>`;
+      grid.innerHTML=`<div class="state-box"><div class="icon">✈️</div><p>Aucun deal Air France ou Air Corsica trouvé.</p></div>`;
       return;
     }
     grid.innerHTML=afDeals.map((d,i)=>cardHTML(d,i)).join('');
     return;
   }
-
   const deals=applyFilters(allData[currentTab]||[]);
   document.getElementById('resultCount').textContent=`— ${deals.length} deal${deals.length>1?'s':''}`;
-
   if(!deals.length){
     grid.innerHTML=`<div class="state-box"><div class="icon">🔍</div><p>Aucun deal trouvé avec ces filtres.<br>Essaie d'élargir ta recherche.</p></div>`;
     return;
@@ -431,11 +464,9 @@ function cardHTML(d,i){
   const sUrl=buildSkyscannerUrl(d.origin,d.destination,d.departure_date,d.return_date);
   const aUrl=getAirlineUrl(d.airline||'');
   const id=`c${i}`;
-
   const retRow=hasReturn
     ?`<div class="fdivider"></div>${flightRowHTML('Ret.',d.return_departure_time,d.destination,d.return_arrival_time,d.origin,d.stops||0)}`
     :'';
-
   return `
 <div class="deal-card" id="${id}" onclick="toggleCard('${id}')" style="animation-delay:${Math.min(i*0.03,0.4)}s">
   <div class="card-header">
@@ -448,13 +479,11 @@ function cardHTML(d,i){
       <span class="dest-pill">${flag} ${d.city_name||d.destination}</span>
     </div>
   </div>
-
   <div class="flight-rows">
     ${flightRowHTML('Aller',d.departure_time,d.origin,d.arrival_time,d.destination,d.stops||0)}
     ${retRow}
     ${d.duration?`<div style="font-size:0.67rem;color:var(--muted);text-align:center;margin-top:0.15rem">⏱ ${d.duration}</div>`:''}
   </div>
-
   <div class="card-footer">
     <div class="dates-row">
       <span class="date-chip">🛫 ${fmtDate(d.departure_date)}</span>
@@ -465,12 +494,10 @@ function cardHTML(d,i){
       <div class="price-sub">aller-retour · éco</div>
     </div>
   </div>
-
   <div class="expand-hint">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
     Voir options de réservation
   </div>
-
   <div class="expanded-panel">
     <div class="book-title">Réserver ce vol</div>
     <div class="book-links">
@@ -502,8 +529,7 @@ function switchTab(tab,el){
 function setFilter(key,val,el){
   filters[key]=val;
   el.closest('.filter-pills').querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  renderDeals();
+  el.classList.add('active');renderDeals();
 }
 function setDestFilter(val){filters.dest=val;renderDeals()}
 function setAirlineFilter(val){filters.airline=val;renderDeals()}
@@ -514,17 +540,17 @@ function setSort(val,el){
   el.classList.add('active');renderDeals();
 }
 function resetFilters(){
-  filters={origin:'all',dest:'all',budget:null,airline:'all',sort:'price'};
+  filters={origin:'all',month:'all',dest:'all',budget:null,airline:'all',sort:'price'};
   document.getElementById('destSelect').value='all';
   document.getElementById('airlineSelect').value='all';
   document.getElementById('budgetInput').value='';
-  document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.fpill').classList.add('active');
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.sort-btn').classList.add('active');
+  document.querySelectorAll('#originPills .fpill').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('#monthPills .fpill').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.sort-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   renderDeals();
 }
 
+buildMonthPills();
 loadAll();
 </script>
 </body>
